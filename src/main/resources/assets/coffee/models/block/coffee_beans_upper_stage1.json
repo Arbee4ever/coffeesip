@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "coffee:block/coffee_beans_upper_stage1"
+  }
+}

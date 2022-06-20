@@ -1,11 +1,11 @@
 {
 	"schema_version": 1,
 	"quilt_loader": {
-		"group": "com.example",
-		"id": "example_mod",
+		"group": "cf.arbee.coffee",
+		"id": "coffee",
 		"version": "${version}",
 		"metadata": {
-			"name": "Mod Name",
+			"name": "COFFEE!",
 			"description": "A short description of your mod.",
 			"contributors": {
 				"Me!": "Owner"
@@ -19,16 +19,17 @@
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"entrypoints": {
-			"init": "com.example.example_mod.ExampleMod"
+			"init": "cf.arbee.coffee.Coffee",
+			"client_init": "cf.arbee.coffee.client.CoffeeClient"
 		},
 		"depends": [
 			{
 				"id": "quilt_loader",
-				"versions": ">=0.17.0-"
+				"versions": ">=0.17.1-beta.1"
 			},
 			{
 				"id": "quilted_fabric_api",
-				"versions": ">=2.0.0-"
+				"versions": ">=2.0.0-alpha.3+0.55.3"
 			},
 			{
 				"id": "minecraft",
@@ -36,5 +37,5 @@
 			}
 		]
 	},
-	"mixin": "example_mod.mixins.json"
+	"mixin": "coffee.mixins.json"
 }

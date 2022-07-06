@@ -1,12 +1,18 @@
-package cf.arbee.coffee.blocks;
+package de.arbeeco.coffee.blocks;
 
-import cf.arbee.coffee.registries.CoffeeBlocks;
-import cf.arbee.coffee.registries.CoffeeItems;
+import de.arbeeco.coffee.registries.CoffeeBlocks;
+import de.arbeeco.coffee.registries.CoffeeItems;
 import net.minecraft.block.*;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.shape.VoxelShape;
@@ -65,5 +71,25 @@ public class CoffeeTreeUpperBlock extends CropBlock implements Fertilizable {
 	@Override
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
 		return SHAPE_BY_AGE[state.get(getAgeProperty())];
+	}
+
+	@Override
+	public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		if (getAge(state) == getMaxAge()) {
+			ItemStack itemStack = new ItemStack(CoffeeItems.COFFEE_BEANS);
+			world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack));
+		}
+		super.onBreak(world, pos, state, player);
+	}
+
+	@Override
+	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+		if (getAge(state) == getMaxAge()) {
+			ItemStack itemStack = new ItemStack(CoffeeItems.COFFEE_BEANS);
+			world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack));
+			world.setBlockState(pos, withAge(getMaxAge() - 1));
+			return ActionResult.SUCCESS;
+		}
+		return ActionResult.PASS;
 	}
 }

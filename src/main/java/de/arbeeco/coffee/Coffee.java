@@ -1,7 +1,8 @@
-package cf.arbee.coffee;
+package de.arbeeco.coffee;
 
-import cf.arbee.coffee.registries.CoffeeBlocks;
-import cf.arbee.coffee.registries.CoffeeItems;
+import de.arbeeco.coffee.registries.CoffeeBlocks;
+import de.arbeeco.coffee.registries.CoffeeFeatures;
+import de.arbeeco.coffee.registries.CoffeeItems;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.slf4j.Logger;
@@ -15,5 +16,6 @@ public class Coffee implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		CoffeeItems.setupItems();
 		CoffeeBlocks.setupBlocks();
+		CoffeeFeatures.setupFeatures();
 	}
 }

@@ -1,8 +1,8 @@
-package cf.arbee.coffee.registries;
+package de.arbeeco.coffee.registries;
 
-import cf.arbee.coffee.Coffee;
-import cf.arbee.coffee.Items.CoffeeCup;
-import cf.arbee.coffee.Items.Cup;
+import de.arbeeco.coffee.Coffee;
+import de.arbeeco.coffee.Items.CoffeeCup;
+import de.arbeeco.coffee.Items.Cup;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.BlockItem;

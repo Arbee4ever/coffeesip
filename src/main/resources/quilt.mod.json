@@ -1,7 +1,7 @@
 {
 	"schema_version": 1,
 	"quilt_loader": {
-		"group": "cf.arbee.coffee",
+		"group": "de.arbeeco.coffee",
 		"id": "coffee",
 		"version": "${version}",
 		"metadata": {
@@ -19,8 +19,8 @@
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"entrypoints": {
-			"init": "cf.arbee.coffee.Coffee",
-			"client_init": "cf.arbee.coffee.client.CoffeeClient"
+			"init": "de.arbeeco.coffee.Coffee",
+			"client_init": "de.arbeeco.coffee.client.CoffeeClient"
 		},
 		"depends": [
 			{

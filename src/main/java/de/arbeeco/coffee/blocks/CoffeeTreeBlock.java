@@ -1,12 +1,9 @@
-package cf.arbee.coffee.blocks;
+package de.arbeeco.coffee.blocks;
 
-import cf.arbee.coffee.registries.CoffeeBlocks;
-import cf.arbee.coffee.registries.CoffeeItems;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import de.arbeeco.coffee.registries.CoffeeBlocks;
+import de.arbeeco.coffee.registries.CoffeeItems;
 import net.minecraft.block.*;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -23,9 +20,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.tick.OrderedTick;
-
-import javax.annotation.Nullable;
-import java.util.Random;
 
 public class CoffeeTreeBlock extends PlantBlock implements Fertilizable {
 	public static final IntProperty AGE = Properties.AGE_3;

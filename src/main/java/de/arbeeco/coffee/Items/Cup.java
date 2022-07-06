@@ -1,4 +1,4 @@
-package cf.arbee.coffee.Items;
+package de.arbeeco.coffee.Items;
 
 import net.minecraft.item.Item;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;

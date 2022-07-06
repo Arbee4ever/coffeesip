@@ -1,6 +1,6 @@
-package cf.arbee.coffee.client;
+package de.arbeeco.coffee.client;
 
-import cf.arbee.coffee.registries.CoffeeBlocks;
+import de.arbeeco.coffee.registries.CoffeeBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.RenderLayer;

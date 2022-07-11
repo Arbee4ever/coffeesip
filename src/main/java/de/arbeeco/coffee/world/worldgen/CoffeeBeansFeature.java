@@ -53,7 +53,8 @@ public class CoffeeBeansFeature extends Feature<RandomPatchFeatureConfig> {
 			mutable.set(context.getOrigin()).move(
 					context.getRandom().nextInt(config.spreadXz() + 1) - context.getRandom().nextInt(config.spreadXz() + 1),
 					context.getRandom().nextInt(config.spreadY() + 1) - context.getRandom().nextInt(config.spreadY() + 1),
-					context.getRandom().nextInt(config.spreadXz() + 1) - context.getRandom().nextInt(config.spreadXz() + 1));
+					context.getRandom().nextInt(config.spreadXz() + 1) - context.getRandom().nextInt(config.spreadXz() + 1)
+			);
 
 			if (level.getBlockState(mutable).getBlock() == Blocks.AIR && coffee_beans.canPlaceAt(level, mutable) && level.getBlockState(mutable.up()).getBlock() == Blocks.AIR && coffee_beans_upper.canPlaceAt(level, mutable)) {
 				context.getWorld().setBlockState(mutable, coffee_beans, 3);

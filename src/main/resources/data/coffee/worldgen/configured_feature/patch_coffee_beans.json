@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:random_patch",
+  "type": "coffeesip:patch_coffee_beans",
   "config": {
     "feature": {
       "feature": {
@@ -22,7 +22,7 @@
               "provider": {
                 "type": "minecraft:simple_state_provider",
                 "state": {
-                  "Name": "coffee:coffee_beans",
+                  "Name": "coffeesip:coffee_beans",
                   "Properties": {
                     "age": "0"
                   }
@@ -46,7 +46,7 @@
               {
                 "type": "minecraft:would_survive",
                 "state": {
-                  "Name": "coffee:coffee_beans",
+                  "Name": "coffeesip:coffee_beans",
                   "Properties": {
                     "age": "0"
                   }

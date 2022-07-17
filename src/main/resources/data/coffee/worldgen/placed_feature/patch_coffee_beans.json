@@ -1,5 +1,5 @@
 {
-  "feature": "coffee:patch_coffee_beans",
+  "feature": "coffeesip:patch_coffee_beans",
   "placement": [
     {
       "type": "minecraft:rarity_filter",

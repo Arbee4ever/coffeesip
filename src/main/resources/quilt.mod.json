@@ -19,13 +19,13 @@
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"entrypoints": {
-			"init": "de.arbeeco.coffee.Coffee",
-			"client_init": "de.arbeeco.coffee.client.CoffeeClient"
+			"init": "de.arbeeco.coffeesip.Coffee",
+			"client_init": "de.arbeeco.coffeesip.client.CoffeeClient"
 		},
 		"depends": [
 			{
 				"id": "quilt_loader",
-				"versions": ">=0.17.1-beta.1"
+				"versions": ">=0.17.0"
 			},
 			{
 				"id": "quilted_fabric_api",

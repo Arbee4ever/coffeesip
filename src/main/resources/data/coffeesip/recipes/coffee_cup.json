@@ -2,14 +2,14 @@
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
         {
-            "item": "coffee:cup"
+            "item": "coffeesip:cup"
         },
         {
-            "item": "coffee:coffee_beans"
+            "item": "coffeesip:coffee_beans"
         }
     ],
     "result": {
-        "item": "coffee:coffee_cup",
+        "item": "coffeesip:coffee_cup",
         "count": 1
     }
 }

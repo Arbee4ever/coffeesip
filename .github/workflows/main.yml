@@ -1,0 +1,33 @@
+name: Publish Mod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: Kir-Antipov/mc-publish@v3.1
+        with:
+          modrinth-featured: true
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          
+          github-prerelease: true
+          github-token: ${{ secrets.GHUB_TOKEN }}
+    
+          name: "[QUILT]coffeesip-1.0.0-1.19"
+          version: 1.0.0-1.19
+          version-type: beta
+
+          loaders: |
+            fabric
+            quilt
+          game-versions: |
+            1.19
+          java: |
+            17
+
+          retry-attempts: 2
+          retry-delay: 10000
+          fail-mode: fail

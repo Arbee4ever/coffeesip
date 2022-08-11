@@ -3,8 +3,13 @@ package de.arbeeco.coffeesip.blocks;
 import de.arbeeco.coffeesip.registries.CoffeeBlocks;
 import de.arbeeco.coffeesip.registries.CoffeeItems;
 import net.minecraft.block.*;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -138,6 +143,18 @@ public class CoffeeTreeBlock extends PlantBlock implements Fertilizable {
 	@Override
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
 		return SHAPE_BY_AGE[getAge(state)];
+	}
+
+	@Override
+	public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		if(!player.isCreative()) {
+			ItemStack itemStack = new ItemStack(CoffeeItems.COFFEE_BEANS);
+			if (world.getBlockState(pos.up()).isOf(CoffeeBlocks.COFFEE_TREE_UPPER_BLOCK.withAge(3).getBlock())) {
+				world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY() + 1, pos.getZ(), itemStack));
+			}
+			world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack));
+		}
+		super.onBreak(world, pos, state, player);
 	}
 
 	public boolean isSupportingCoffeeUpper(BlockState topState) {

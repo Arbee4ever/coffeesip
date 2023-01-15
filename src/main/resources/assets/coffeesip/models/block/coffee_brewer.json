@@ -1,0 +1,46 @@
+{
+	"credit": "Made with Blockbench by woodie",
+    "parent": "block/block",
+	"textures": {
+		"0": "block/smooth_stone",
+		"1": "block/repeater_on",
+		"2": "block/comparator_on",
+		"particle": "block/smooth_stone"
+	},
+	"elements": [
+		{
+			"from": [2, 0, 2],
+			"to": [14, 2, 14],
+			"faces": {
+				"north": {"uv": [2, 1, 14, 3], "texture": "#0"},
+				"east": {"uv": [2, 1, 14, 3], "texture": "#0"},
+				"south": {"uv": [2, 1, 14, 3], "texture": "#0"},
+				"west": {"uv": [2, 1, 14, 3], "texture": "#0"},
+				"up": {"uv": [2, 2, 14, 14], "texture": "#0"},
+				"down": {"uv": [2, 2, 14, 14], "texture": "#0", "cullface": "down"}
+			}
+		},
+		{
+			"from": [2, 2, 8],
+			"to": [14, 13, 14],
+			"faces": {
+				"north": {"uv": [2, 0, 14, 11], "texture": "#1"},
+				"east": {"uv": [1, 1, 7, 12], "texture": "#0"},
+				"south": {"uv": [2, 1, 14, 12], "texture": "#0"},
+				"west": {"uv": [1, 1, 7, 12], "texture": "#0"},
+				"up": {"uv": [2, 1, 14, 7], "texture": "#0"}
+			}
+		},
+		{
+			"from": [2, 9, 3],
+			"to": [14, 13, 8],
+			"faces": {
+				"north": {"uv": [2, 8, 14, 12], "texture": "#2"},
+				"east": {"uv": [1, 1, 6, 5], "texture": "#0"},
+				"west": {"uv": [1, 1, 6, 5], "texture": "#0"},
+				"up": {"uv": [2, 1, 14, 6], "texture": "#0"},
+				"down": {"uv": [2, 1, 14, 6], "texture": "#0"}
+			}
+		}
+	]
+}

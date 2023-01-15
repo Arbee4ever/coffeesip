@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "coffeesip:block/coffee_brewer"
+    },
+    "facing=east": {
+      "model": "coffeesip:block/coffee_brewer",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "coffeesip:block/coffee_brewer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "coffeesip:block/coffee_brewer",
+      "y": 270
+    }
+  }
+}
+

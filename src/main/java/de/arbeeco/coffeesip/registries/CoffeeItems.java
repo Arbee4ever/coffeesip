@@ -13,6 +13,11 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
 
 public class CoffeeItems {
+	public static final BlockItem COFFEE_BREWER_ITEM = new BlockItem(
+			CoffeeBlocks.COFFEE_BREWER_BLOCK,
+			new QuiltItemSettings()
+					.group(ItemGroup.BREWING)
+	);
 	public static final CoffeeCup COFFEE_CUP = new CoffeeCup(
 			new QuiltItemSettings()
 					.maxCount(1)
@@ -38,6 +43,7 @@ public class CoffeeItems {
 	);
 
 	public static void setupItems() {
+		Registry.register(Registry.ITEM, new Identifier(Coffee.MOD_ID, "coffee_brewer"), COFFEE_BREWER_ITEM);
 		Registry.register(Registry.ITEM, new Identifier(Coffee.MOD_ID, "coffee_cup"), COFFEE_CUP);
 		Registry.register(Registry.ITEM, new Identifier(Coffee.MOD_ID, "cup"), CUP);
 		Registry.register(Registry.ITEM, new Identifier(Coffee.MOD_ID, "coffee_beans"), COFFEE_BEANS);

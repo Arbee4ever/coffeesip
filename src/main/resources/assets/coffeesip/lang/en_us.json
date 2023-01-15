@@ -1,5 +1,7 @@
 {
+  "block.coffeesip.coffee_brewer": "Coffee Brewer",
   "block.coffeesip.coffee_beans": "Coffee Beans",
   "item.coffeesip.coffee_cup": "Coffee Cup",
-  "item.coffeesip.cup": "Cup"
+  "item.coffeesip.cup": "Cup",
+  "gui.coffeesip.coffee_brewer": "Coffee Brewer"
 }

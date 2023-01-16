@@ -1,20 +1,117 @@
 {
-  "variants": {
-    "facing=north": {
-      "model": "coffeesip:block/coffee_brewer"
+  "multipart": [
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer"
+      },
+      "when": {
+        "facing": "north"
+      }
     },
-    "facing=east": {
-      "model": "coffeesip:block/coffee_brewer",
-      "y": 90
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
     },
-    "facing=south": {
-      "model": "coffeesip:block/coffee_brewer",
-      "y": 180
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
     },
-    "facing=west": {
-      "model": "coffeesip:block/coffee_brewer",
-      "y": 270
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer_cup0"
+      },
+      "when": {
+        "has_cup_0": "true",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer_cup1"
+      },
+      "when": {
+        "has_cup_1": "true",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer_cup0",
+        "y": 90
+      },
+      "when": {
+        "has_cup_0": "true",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer_cup1",
+        "y": 90
+      },
+      "when": {
+        "has_cup_1": "true",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer_cup0",
+        "y": 180
+      },
+      "when": {
+        "has_cup_0": "true",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer_cup1",
+        "y": 180
+      },
+      "when": {
+        "has_cup_1": "true",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer_cup0",
+        "y": 270
+      },
+      "when": {
+        "has_cup_0": "true",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "coffeesip:block/coffee_brewer_cup1",
+        "y": 270
+      },
+      "when": {
+        "has_cup_1": "true",
+        "facing": "west"
+      }
     }
-  }
+  ]
 }
-

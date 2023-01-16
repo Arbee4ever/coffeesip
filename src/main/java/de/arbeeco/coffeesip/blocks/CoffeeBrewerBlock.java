@@ -1,14 +1,19 @@
 package de.arbeeco.coffeesip.blocks;
 
 import de.arbeeco.coffeesip.blocks.entity.CoffeeBrewerBlockEntity;
+import de.arbeeco.coffeesip.registries.CoffeeBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -18,11 +23,19 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class CoffeeBrewerBlock extends Block implements BlockEntityProvider {
+public class CoffeeBrewerBlock extends BlockWithEntity {
+	public static final BooleanProperty HAS_CUP_0 = BooleanProperty.of("has_cup_0");
+	public static final BooleanProperty HAS_CUP_1 = BooleanProperty.of("has_cup_1");
+	public static final BooleanProperty[] CUP_PROPERTIES = new BooleanProperty[]{HAS_CUP_0, HAS_CUP_1};
 	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
+
 	public CoffeeBrewerBlock(Settings settings) {
 		super(settings);
-		this.setDefaultState(getDefaultState().with(FACING, Direction.NORTH));
+		setDefaultState(getDefaultState()
+				.with(FACING, Direction.NORTH)
+				.with(CUP_PROPERTIES[0], false)
+				.with(CUP_PROPERTIES[1], false)
+		);
 	}
 
 	@Override
@@ -54,9 +67,15 @@ public class CoffeeBrewerBlock extends Block implements BlockEntityProvider {
 		}
 	}
 
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+		return world.isClient ? null : checkType(type, CoffeeBlocks.COFFEE_BREWER_BLOCK_ENTITY, CoffeeBrewerBlockEntity::tick);
+	}
+
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, CUP_PROPERTIES[0], CUP_PROPERTIES[1]);
 	}
 
 	@Nullable
@@ -75,6 +94,17 @@ public class CoffeeBrewerBlock extends Block implements BlockEntityProvider {
 				player.openHandledScreen((CoffeeBrewerBlockEntity) blockEntity);
 			}
 			return ActionResult.CONSUME;
+		}
+	}
+
+	@Override
+	public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+		if (!state.isOf(newState.getBlock())) {
+			BlockEntity blockEntity = world.getBlockEntity(pos);
+			if (blockEntity instanceof CoffeeBrewerBlockEntity) {
+				ItemScatterer.spawn(world, pos, (CoffeeBrewerBlockEntity)blockEntity);
+			}
+			super.onStateReplaced(state, world, pos, newState, moved);
 		}
 	}
 

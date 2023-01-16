@@ -1,4 +1,4 @@
-package de.arbeeco.coffeesip.Items;
+package de.arbeeco.coffeesip.items;
 
 import de.arbeeco.coffeesip.registries.CoffeeItems;
 import net.minecraft.advancement.criterion.Criteria;

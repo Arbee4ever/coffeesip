@@ -32,9 +32,9 @@ public class CoffeeBrewerScreen extends HandledScreen<CoffeeBrewerScreenHandler>
 		int i = (width - backgroundWidth) / 2;
 		int j = (height - backgroundHeight) / 2;
 		this.drawTexture(matrices, i, j, 0, 0, backgroundWidth, backgroundHeight);
-		double fuel = (handler).getFuel();
+		double fuel = handler.getFuel();
 		double fuelMax = 20;
-		double water = (handler).getWater();
+		double water = handler.getWater();
 		double waterMax = 1000;
 		double fuelWidth = 18 * (fuel / fuelMax);
 		double waterWidth = 18 * (water / waterMax);
@@ -45,7 +45,7 @@ public class CoffeeBrewerScreen extends HandledScreen<CoffeeBrewerScreenHandler>
 			this.drawTexture(matrices, i + 96, j + 44, 194, 29, (int) waterWidth, 4);
 		}
 
-		int m = (handler).getBrewTime();
+		int m = handler.getBrewTime();
 		if (m > 0) {
 			int n = (int) (28.0F * (1.0F - (float) m / 400.0F));
 			if (n > 0) {

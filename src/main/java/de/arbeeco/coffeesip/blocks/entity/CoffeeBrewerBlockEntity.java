@@ -35,7 +35,6 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	private DefaultedList<ItemStack> inventory;
 	int brewTime = 0;
 	private boolean[] slotsEmptyLastTick;
-	private Item itemBrewing;
 	int fuel;
 	int reservedFuel = 0;
 	int water;
@@ -47,7 +46,6 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	public CoffeeBrewerBlockEntity(BlockPos blockPos, BlockState blockState) {
 		super(CoffeeBlocks.COFFEE_BREWER_BLOCK_ENTITY, blockPos, blockState);
 		this.inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
-		itemBrewing = null;
 		this.propertyDelegate = new PropertyDelegate() {
 			public int get(int index) {
 				switch (index) {
@@ -145,6 +143,8 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 			}
 		} else if(blockEntity.canCraft()) {
 			blockEntity.brewTime = 400;
+		} else {
+			blockEntity.brewTime = 0;
 		}
 
 		boolean[] bls = blockEntity.getSlotsEmpty();
@@ -162,21 +162,21 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	}
 
 	private boolean canCraft() {
-		return world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world).isPresent();
+		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world);
+		if (optional.isEmpty()) return false;
+		reservedWater = optional.get().water();
+		reservedFuel = optional.get().fuel();
+		if (getFuel() - reservedFuel < 0 || getWater() - reservedWater < 0) return false;
+		return optional.isPresent();
 	}
 
 	private void tryCraft() {
 		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world);
-		if (optional.isEmpty()) return;
-		reservedWater = optional.get().water();
-		reservedFuel = optional.get().fuel();
-		if (!(getFuel() - reservedFuel > 0 && getWater() - reservedWater > 0)) return;
 		optional.ifPresent(this::startCrafting);
 	}
 
 	private void startCrafting(CoffeeBrewingRecipe coffeeBrewingRecipe) {
 		result = coffeeBrewingRecipe.getOutput();
-		itemBrewing = result.copy().getItem();
 		water -= reservedWater;
 		fuel -= reservedFuel;
 
@@ -224,7 +224,6 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	public void setStack(int slot, ItemStack stack) {
 		if (slot >= 0 && slot < inventory.size()) {
 			inventory.set(slot, stack);
-			brewTime = 0;
 			markDirty();
 		}
 	}

@@ -13,8 +13,10 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.screen.ArrayPropertyDelegate;
+import net.minecraft.screen.BrewingStandScreenHandler;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -53,62 +55,28 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 	}
 
 	@Override
-	public ItemStack transferSlot(PlayerEntity player, int index) {
-		ItemStack itemStack = ItemStack.EMPTY;
-		Slot slot = slots.get(index);
+	public ItemStack transferSlot(PlayerEntity player, int invSlot) {
+		ItemStack newStack = ItemStack.EMPTY;
+		Slot slot = slots.get(invSlot);
 		if (slot != null && slot.hasStack()) {
-			ItemStack itemStack2 = slot.getStack();
-			itemStack = itemStack2.copy();
-			if ((index < 0 || index > 2) && index != 3 && index != 4) {
-				if (FuelSlot.matches(itemStack)) {
-					if (insertItem(itemStack2, 3, 4, false) || ingredientSlot.canInsert(itemStack2) && !insertItem(itemStack2, 3, 4, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (WaterSlot.matches(itemStack)) {
-					if (insertItem(itemStack2, 4, 5, false) || ingredientSlot.canInsert(itemStack2) && !insertItem(itemStack2, 4, 5, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (ingredientSlot.canInsert(itemStack2)) {
-					if (!insertItem(itemStack2, 2, 3, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (CupSlot.matches(itemStack) && itemStack.getCount() == 1) {
-					if (!insertItem(itemStack2, 0, 2, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (index >= 5 && index < 32) {
-					if (!insertItem(itemStack2, 32, 40, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (index >= 32 && index < 40) {
-					if (!insertItem(itemStack2, 5, 32, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (!insertItem(itemStack2, 5, 40, false)) {
+			ItemStack originalStack = slot.getStack();
+			newStack = originalStack.copy();
+			if (invSlot < this.inventory.size()) {
+				if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
 					return ItemStack.EMPTY;
 				}
-			} else {
-				if (!insertItem(itemStack2, 5, 41, true)) {
-					return ItemStack.EMPTY;
-				}
-
-				slot.onQuickTransfer(itemStack2, itemStack);
+			} else if (!this.insertItem(originalStack, 0, this.inventory.size(), false)) {
+				return ItemStack.EMPTY;
 			}
 
-			if (itemStack2.isEmpty()) {
+			if (originalStack.isEmpty()) {
 				slot.setStack(ItemStack.EMPTY);
 			} else {
 				slot.markDirty();
 			}
-
-			if (itemStack2.getCount() == itemStack.getCount()) {
-				return ItemStack.EMPTY;
-			}
-
-			slot.onTakeItem(player, itemStack2);
 		}
 
-		return itemStack;
+		return newStack;
 	}
 
 	@Override
@@ -137,6 +105,11 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 			return false;
 		}
 		return super.insertItem(stack, startIndex, endIndex, fromLast);
+	}
+
+	@Override
+	public void setStackInSlot(int slot, int revision, ItemStack stack) {
+
 	}
 
 	static class CupSlot extends Slot {

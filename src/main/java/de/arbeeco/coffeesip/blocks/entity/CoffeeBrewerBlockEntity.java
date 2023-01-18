@@ -4,7 +4,6 @@ import de.arbeeco.coffeesip.blocks.CoffeeBrewerBlock;
 import de.arbeeco.coffeesip.client.gui.CoffeeBrewerScreenHandler;
 import de.arbeeco.coffeesip.recipes.CoffeeBrewingRecipe;
 import de.arbeeco.coffeesip.registries.CoffeeBlocks;
-import de.arbeeco.coffeesip.registries.CoffeeItems;
 import de.arbeeco.coffeesip.registries.CoffeeRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
@@ -30,10 +29,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implements SidedInventory {
 	private DefaultedList<ItemStack> inventory;
-	int brewTime;
+	int brewTime = 0;
 	private boolean[] slotsEmptyLastTick;
 	private Item itemBrewing;
 	int fuel;
@@ -47,6 +47,7 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	public CoffeeBrewerBlockEntity(BlockPos blockPos, BlockState blockState) {
 		super(CoffeeBlocks.COFFEE_BREWER_BLOCK_ENTITY, blockPos, blockState);
 		this.inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
+		itemBrewing = null;
 		this.propertyDelegate = new PropertyDelegate() {
 			public int get(int index) {
 				switch (index) {
@@ -128,15 +129,22 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 		if (blockEntity.fuel <= 0 && fuelStack.isOf(Items.BLAZE_POWDER)) {
 			blockEntity.fuel = 20;
 			fuelStack.decrement(1);
-			blockEntity.tryCraft();
 			markDirty(world, pos, state);
 		}
 		ItemStack waterStack = blockEntity.inventory.get(4);
 		if (blockEntity.water <= 0 && waterStack.isOf(Items.WATER_BUCKET)) {
 			blockEntity.water = 1000;
 			blockEntity.inventory.set(4, new ItemStack(Items.BUCKET));
-			blockEntity.tryCraft();
 			markDirty(world, pos, state);
+		}
+
+		if (blockEntity.brewTime > 0 && blockEntity.canCraft()) {
+			--blockEntity.brewTime;
+			if (blockEntity.brewTime == 0) {
+				blockEntity.tryCraft();
+			}
+		} else if(blockEntity.canCraft()) {
+			blockEntity.brewTime = 400;
 		}
 
 		boolean[] bls = blockEntity.getSlotsEmpty();
@@ -146,13 +154,45 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 			if (!(state.getBlock() instanceof CoffeeBrewerBlock)) {
 				return;
 			}
-
 			for (int i = 0; i < CoffeeBrewerBlock.CUP_PROPERTIES.length; ++i) {
 				blockState = blockState.with(CoffeeBrewerBlock.CUP_PROPERTIES[i], bls[i]);
 			}
-
 			world.setBlockState(pos, blockState, 2);
 		}
+	}
+
+	private boolean canCraft() {
+		return world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world).isPresent();
+	}
+
+	private void tryCraft() {
+		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world);
+		if (optional.isEmpty()) return;
+		reservedWater = optional.get().water();
+		reservedFuel = optional.get().fuel();
+		if (!(getFuel() - reservedFuel > 0 && getWater() - reservedWater > 0)) return;
+		optional.ifPresent(this::startCrafting);
+	}
+
+	private void startCrafting(CoffeeBrewingRecipe coffeeBrewingRecipe) {
+		result = coffeeBrewingRecipe.getOutput();
+		itemBrewing = result.copy().getItem();
+		water -= reservedWater;
+		fuel -= reservedFuel;
+
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < coffeeBrewingRecipe.inputs().length - 1; j++) {
+				if (coffeeBrewingRecipe.inputs()[j].test(getStack(i))) {
+					setStack(i, result.copy());
+				}
+			}
+		}
+		for (int i = 0; i < coffeeBrewingRecipe.inputs().length; i++) {
+			if (coffeeBrewingRecipe.inputs()[i].test(new ItemStack(getStack(2).getItem()))) {
+				getStack(2).decrement(coffeeBrewingRecipe.inputs()[i].getMatchingStacks()[0].getCount());
+			}
+		}
+		markDirty();
 	}
 
 	private boolean[] getSlotsEmpty() {
@@ -165,35 +205,6 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 		return bls;
 	}
 
-	private void tryCraft() {
-		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world);
-		if (optional.isEmpty()) return;
-		reservedWater = optional.get().water();
-		reservedFuel = optional.get().fuel();
-		if (!(getFuel() - reservedFuel >= 0 && getWater() - reservedWater >= 0)) return;
-		optional.ifPresent(this::startCrafting);
-	}
-
-	private void startCrafting(CoffeeBrewingRecipe coffeeBrewingRecipe) {
-		result = coffeeBrewingRecipe.result().copy();
-		water -= reservedWater;
-		fuel -= reservedFuel;
-
-		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < coffeeBrewingRecipe.inputs().length - 1; j++) {
-				if (coffeeBrewingRecipe.inputs()[j].test(getStack(i))) {
-					setStack(i, result);
-				}
-			}
-		}
-		for (int i = 0; i < coffeeBrewingRecipe.inputs().length; i++) {
-			if (coffeeBrewingRecipe.inputs()[i].test(new ItemStack(getStack(2).getItem()))) {
-				getStack(2).decrement(coffeeBrewingRecipe.inputs()[i].getMatchingStacks()[0].getCount());
-			}
-		};
-		markDirty();
-	}
-
 	@Override
 	public ItemStack getStack(int slot) {
 		return slot >= 0 && slot < inventory.size() ? inventory.get(slot) : ItemStack.EMPTY;
@@ -201,22 +212,20 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 
 	@Override
 	public ItemStack removeStack(int slot, int amount) {
-		markDirty();
 		return Inventories.splitStack(inventory, slot, amount);
 	}
 
 	@Override
 	public ItemStack removeStack(int slot) {
-		markDirty();
 		return Inventories.removeStack(inventory, slot);
 	}
 
 	@Override
 	public void setStack(int slot, ItemStack stack) {
 		if (slot >= 0 && slot < inventory.size()) {
-			markDirty();
 			inventory.set(slot, stack);
-			tryCraft();
+			brewTime = 0;
+			markDirty();
 		}
 	}
 
@@ -237,24 +246,30 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	@Override
 	public void readNbt(NbtCompound nbt) {
 		super.readNbt(nbt);
+		fuel = nbt.getByte("Fuel");
+		water = nbt.getByte("Water");
+		brewTime = nbt.getShort("BrewTime");
 		Inventories.readNbt(nbt, inventory);
 	}
 
 	@Override
 	public void writeNbt(NbtCompound nbt) {
 		super.writeNbt(nbt);
+		nbt.putByte("Fuel", (byte) fuel);
+		nbt.putByte("Water", (byte) water);
+		nbt.putShort("BrewTime", (short) brewTime);
 		Inventories.writeNbt(nbt, inventory);
-	}
-
-	@Override
-	public NbtCompound toInitialChunkDataNbt() {
-		return toNbt();
 	}
 
 	@Nullable
 	@Override
 	public Packet<ClientPlayPacketListener> toUpdatePacket() {
 		return BlockEntityUpdateS2CPacket.of(this);
+	}
+
+	@Override
+	public NbtCompound toInitialChunkDataNbt() {
+		return toNbt();
 	}
 
 	@Override

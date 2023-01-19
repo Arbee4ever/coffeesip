@@ -47,7 +47,7 @@ public class CoffeeBrewerScreen extends HandledScreen<CoffeeBrewerScreenHandler>
 
 		int m = handler.getBrewTime();
 		if (m > 0) {
-			int n = (int) (28.0F * (1.0F - (float) m / 400.0F));
+			int n = (int) (28.0F * (1.0F - (float) m / 100.0F));
 			if (n > 0) {
 				drawTexture(matrices, i + 97, j + 15, 176, 0, 9, n);
 			}

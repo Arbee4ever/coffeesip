@@ -142,7 +142,7 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 				blockEntity.tryCraft();
 			}
 		} else if(blockEntity.canCraft()) {
-			blockEntity.brewTime = 400;
+			blockEntity.brewTime = 100;
 		} else {
 			blockEntity.brewTime = 0;
 		}

@@ -7,11 +7,11 @@ import de.arbeeco.coffeesip.registries.CoffeeBlocks;
 import de.arbeeco.coffeesip.registries.CoffeeRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implements SidedInventory {
 	private DefaultedList<ItemStack> inventory;

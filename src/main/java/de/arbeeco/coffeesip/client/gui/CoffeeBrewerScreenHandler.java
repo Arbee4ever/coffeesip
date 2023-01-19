@@ -11,19 +11,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
-import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.screen.ArrayPropertyDelegate;
-import net.minecraft.screen.BrewingStandScreenHandler;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class CoffeeBrewerScreenHandler extends ScreenHandler {
 	private final Inventory inventory;
 	private final PropertyDelegate propertyDelegate;
-	private final Slot ingredientSlot;
 	public CoffeeBrewerScreenHandler(int i, PlayerInventory playerInventory) {
 		this(i, playerInventory, new SimpleInventory(5), new ArrayPropertyDelegate(3));
 	}
@@ -36,7 +32,7 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 		this.propertyDelegate = propertyDelegate;
 		addSlot(new CupSlot(inventory, 0, 67, 51));
 		addSlot(new CupSlot(inventory, 1, 91, 51));
-		ingredientSlot = addSlot(new IngredientSlot(inventory, 2, 79, 17));
+		addSlot(new IngredientSlot(inventory, 2, 79, 17));
 		addSlot(new FuelSlot(inventory, 3, 17, 17));
 		addSlot(new WaterSlot(inventory, 4, 141, 17));
 		addProperties(propertyDelegate);
@@ -105,11 +101,6 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 			return false;
 		}
 		return super.insertItem(stack, startIndex, endIndex, fromLast);
-	}
-
-	@Override
-	public void setStackInSlot(int slot, int revision, ItemStack stack) {
-
 	}
 
 	static class CupSlot extends Slot {

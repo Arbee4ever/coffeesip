@@ -12,6 +12,7 @@ import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.ArrayPropertyDelegate;
+import net.minecraft.screen.BrewingStandScreenHandler;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -43,7 +44,6 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 				addSlot(new Slot(playerInventory, k + j * 9 + 9, 8 + k * 18, 84 + j * 18));
 			}
 		}
-
 		for(j = 0; j < 9; ++j) {
 			addSlot(new Slot(playerInventory, j, 8 + j * 18, 142));
 		}
@@ -71,7 +71,6 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 				slot.markDirty();
 			}
 		}
-
 		return newStack;
 	}
 
@@ -119,7 +118,6 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 			if (player instanceof ServerPlayerEntity) {
 				Criteria.BREWED_POTION.trigger((ServerPlayerEntity)player, potion);
 			}
-
 			super.onTakeItem(player, stack);
 		}
 
@@ -143,7 +141,7 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 
 		@Override
 		public boolean canInsert(ItemStack stack) {
-			return stack.isOf(CoffeeItems.COFFEE_BEANS);
+			return stack.isOf(CoffeeItems.COFFEE_POWDER) || stack.isOf(Items.POTION);
 		}
 
 		@Override

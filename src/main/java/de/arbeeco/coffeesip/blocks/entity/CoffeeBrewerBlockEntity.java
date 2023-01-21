@@ -7,7 +7,6 @@ import de.arbeeco.coffeesip.registries.CoffeeBlocks;
 import de.arbeeco.coffeesip.registries.CoffeeRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -18,6 +17,9 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionUtil;
+import net.minecraft.potion.Potions;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -47,28 +49,19 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 		this.inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
 		this.propertyDelegate = new PropertyDelegate() {
 			public int get(int index) {
-				switch (index) {
-					case 0:
-						return brewTime;
-					case 1:
-						return fuel;
-					case 2:
-						return water;
-					default:
-						return 0;
-				}
+				return switch (index) {
+					case 0 -> brewTime;
+					case 1 -> fuel;
+					case 2 -> water;
+					default -> 0;
+				};
 			}
 
 			public void set(int index, int value) {
 				switch (index) {
-					case 0:
-						brewTime = value;
-						break;
-					case 1:
-						fuel = value;
-						break;
-					case 2:
-						water = value;
+					case 0 -> brewTime = value;
+					case 1 -> fuel = value;
+					case 2 -> water = value;
 				}
 			}
 
@@ -161,6 +154,7 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	}
 
 	private boolean canCraft() {
+		if (!PotionUtil.getPotion(getStack(0)).equals(Potions.EMPTY) || !PotionUtil.getPotion(getStack(1)).equals(Potions.EMPTY)) return false;
 		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world);
 		if (optional.isEmpty()) return false;
 		reservedWater = optional.get().water();
@@ -175,6 +169,7 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	}
 
 	private void startCrafting(CoffeeBrewingRecipe coffeeBrewingRecipe) {
+		boolean potion = false;
 		result = coffeeBrewingRecipe.getOutput();
 		water -= reservedWater;
 		fuel -= reservedFuel;
@@ -182,13 +177,21 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < coffeeBrewingRecipe.inputs().length - 1; j++) {
 				if (coffeeBrewingRecipe.inputs()[j].test(getStack(i))) {
-					setStack(i, result.copy());
+					ItemStack output = result.copy();
+					if(getStack(2).isOf(Items.POTION)) {
+						potion = true;
+						PotionUtil.setPotion(output, PotionUtil.getPotion(getStack(2)));
+					}
+					setStack(i, output);
 				}
 			}
 		}
 		for (int i = 0; i < coffeeBrewingRecipe.inputs().length; i++) {
 			if (coffeeBrewingRecipe.inputs()[i].test(new ItemStack(getStack(2).getItem()))) {
 				getStack(2).decrement(coffeeBrewingRecipe.inputs()[i].getMatchingStacks()[0].getCount());
+				if (potion) {
+					setStack(2, new ItemStack(Items.GLASS_BOTTLE));
+				}
 			}
 		}
 		markDirty();

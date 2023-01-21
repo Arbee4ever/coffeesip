@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "coffeesip:roasted_coffee_beans"
+    }
+  ],
+  "result": {
+    "item": "coffeesip:coffee_powder",
+    "count": 8
+  }
+}

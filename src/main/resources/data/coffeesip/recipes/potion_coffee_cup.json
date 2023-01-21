@@ -2,15 +2,15 @@
   "type": "coffeesip:coffee_brewing",
   "inputs": [
     {
-      "item": "coffeesip:coffee_powder",
+      "item": "minecraft:potion",
       "count": 1
     },
     {
-      "item": "coffeesip:cup",
+      "item": "coffeesip:coffee_cup",
       "count": 1
     },
     {
-      "item": "coffeesip:cup",
+      "item": "coffeesip:coffee_cup",
       "count": 1
     }
   ],

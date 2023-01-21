@@ -12,7 +12,6 @@ import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.ArrayPropertyDelegate;
-import net.minecraft.screen.BrewingStandScreenHandler;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -54,7 +53,7 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 	public ItemStack transferSlot(PlayerEntity player, int invSlot) {
 		ItemStack newStack = ItemStack.EMPTY;
 		Slot slot = slots.get(invSlot);
-		if (slot != null && slot.hasStack()) {
+		if (slot.hasStack()) {
 			ItemStack originalStack = slot.getStack();
 			newStack = originalStack.copy();
 			if (invSlot < this.inventory.size()) {

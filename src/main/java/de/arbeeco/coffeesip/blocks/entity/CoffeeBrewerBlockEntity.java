@@ -17,9 +17,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
-import net.minecraft.potion.Potions;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -33,7 +31,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implements SidedInventory {
-	private DefaultedList<ItemStack> inventory;
+	private final DefaultedList<ItemStack> inventory;
 	int brewTime = 0;
 	private boolean[] slotsEmptyLastTick;
 	int fuel;
@@ -88,7 +86,7 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 
 	@Override
 	public boolean isEmpty() {
-		Iterator var1 = inventory.iterator();
+		Iterator<ItemStack> var1 = inventory.iterator();
 
 		ItemStack itemStack;
 		do {
@@ -96,7 +94,7 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 				return true;
 			}
 
-			itemStack = (ItemStack) var1.next();
+			itemStack = var1.next();
 		} while (itemStack.isEmpty());
 
 		return false;
@@ -154,13 +152,14 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	}
 
 	private boolean canCraft() {
-		if (!PotionUtil.getPotion(getStack(0)).equals(Potions.EMPTY) || !PotionUtil.getPotion(getStack(1)).equals(Potions.EMPTY)) return false;
+		if (!(PotionUtil.getPotion(getStack(0)).getEffects().size() == 0) || !(PotionUtil.getPotion(getStack(1)).getEffects().size() == 0)) {
+			return false;
+		}
 		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world);
 		if (optional.isEmpty()) return false;
 		reservedWater = optional.get().water();
 		reservedFuel = optional.get().fuel();
-		if (getFuel() - reservedFuel < 0 || getWater() - reservedWater < 0) return false;
-		return optional.isPresent();
+		return getFuel() - reservedFuel >= 0 && getWater() - reservedWater >= 0;
 	}
 
 	private void tryCraft() {

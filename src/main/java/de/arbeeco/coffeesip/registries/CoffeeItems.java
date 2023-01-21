@@ -2,12 +2,7 @@ package de.arbeeco.coffeesip.registries;
 
 import de.arbeeco.coffeesip.Coffee;
 import de.arbeeco.coffeesip.items.CoffeeCup;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
@@ -21,13 +16,11 @@ public class CoffeeItems {
 	public static final CoffeeCup COFFEE_CUP = new CoffeeCup(
 			new QuiltItemSettings()
 					.maxCount(1)
-					.group(ItemGroup.FOOD)
+					.group(ItemGroup.BREWING)
 					.food(
 							new FoodComponent.Builder()
-									.hunger(1)
 									.saturationModifier(0)
 									.alwaysEdible()
-									.statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 600), 0.15f)
 									.build()
 					)
 	);
@@ -47,7 +40,7 @@ public class CoffeeItems {
 	);
 	public static final Item COFFEE_POWDER = new Item(
 			new QuiltItemSettings()
-					.group(ItemGroup.FOOD)
+					.group(ItemGroup.BREWING)
 	);
 
 	public static void setupItems() {

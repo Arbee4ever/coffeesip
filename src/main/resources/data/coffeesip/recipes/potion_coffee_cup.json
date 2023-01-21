@@ -14,7 +14,7 @@
       "count": 1
     }
   ],
-  "water": 250,
+  "water": 0,
   "fuel": 10,
   "result": {
     "item": "coffeesip:coffee_cup",

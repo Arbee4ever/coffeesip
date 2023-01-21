@@ -1,0 +1,33 @@
+{
+	"credit": "Made with Blockbench by woodie",
+	"parent": "block/block",
+    "textures": {
+      "1": "coffeesip:block/coffee_brewer_cup"
+    },
+	"elements": [
+		{
+			"from": [4, 2, 4],
+			"to": [7, 6, 7],
+			"faces": {
+				"north": {"uv": [0.25, 0.25, 0.75, 0.75], "texture": "#1"},
+				"east": {"uv": [1.25, 0.25, 1.75, 0.75], "texture": "#1"},
+				"south": {"uv": [2.25, 0.25, 2.75, 0.75], "texture": "#1"},
+				"west": {"uv": [3.25, 0.25, 3.75, 0.75], "texture": "#1"},
+				"up": {"uv": [4.25, 0.25, 4.75, 0.75], "texture": "#1"},
+				"down": {"uv": [5.25, 0.25, 5.75, 0.75], "texture": "#1"}
+			}
+		},
+		{
+			"from": [3, 3, 5],
+			"to": [4, 6, 6],
+			"faces": {
+				"north": {"uv": [0.25, 0.25, 0.75, 0.75], "texture": "#1"},
+				"east": {"uv": [1.25, 0.25, 1.75, 0.75], "texture": "#1"},
+				"south": {"uv": [2.25, 0.25, 2.75, 0.75], "texture": "#1"},
+				"west": {"uv": [3.25, 0.25, 3.75, 0.75], "texture": "#1"},
+				"up": {"uv": [4.25, 0.25, 4.75, 0.75],  "texture": "#1"},
+				"down": {"uv": [5.25, 0.25, 5.75, 0.75], "texture": "#1"}
+			}
+		}
+	]
+}

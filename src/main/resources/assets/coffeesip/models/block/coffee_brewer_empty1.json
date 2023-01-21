@@ -1,0 +1,10 @@
+{
+	"credit": "Made with Blockbench by woodie",
+	"parent": "block/block",
+	"textures": {
+		"0": "block/smooth_stone",
+		"1": "block/repeater_on",
+		"2": "block/comparator_on",
+		"particle": "block/smooth_stone"
+	}
+}

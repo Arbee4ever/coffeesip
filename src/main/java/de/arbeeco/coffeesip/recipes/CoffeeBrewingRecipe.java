@@ -5,6 +5,7 @@ import de.arbeeco.coffeesip.blocks.entity.CoffeeBrewerBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
@@ -15,26 +16,22 @@ import net.minecraft.world.World;
 
 import java.util.Arrays;
 
-public record CoffeeBrewingRecipe(Identifier id, int fuel, int water, Ingredient[] inputs,
+public record CoffeeBrewingRecipe(Identifier id, int fuel, int water, Ingredient input, Ingredient ingredient,
 								  ItemStack result) implements Recipe<Inventory> {
 	public static final CoffeeBrewingRecipeType<CoffeeBrewingRecipe> TYPE = new CoffeeBrewingRecipeType<>(new Identifier(Coffee.MOD_ID, "coffee_brewing"));
 
 	@Override
 	public boolean matches(Inventory inventory, World world) {
-		var met = new boolean[]{false, false, false};
-		for (var i = 0; i < inventory.size(); i++) {
-			for (var j = 0; j < inputs().length; j++) {
-				if (!met[j]) {
-					met[j] = inputs()[j].test(inventory.getStack(i));
-					if (met[j]) {
-						break;
-					} else if (j >= inputs().length - 1) {
-						return false;
-					}
-				}
-			}
+		if (inventory.getStack(1).isOf(Items.AIR) && inventory.getStack(0).isOf(Items.AIR)) {
+			return false;
 		}
-		return Arrays.equals(met, new boolean[]{true, true, true});
+		if (!(input().test(inventory.getStack(0)) || inventory.getStack(0).isOf(Items.AIR))) {
+			return false;
+		}
+		if (!(input().test(inventory.getStack(1)) || inventory.getStack(1).isOf(Items.AIR))) {
+			return false;
+		}
+		return ingredient.test(inventory.getStack(2));
 	}
 
 	@Override

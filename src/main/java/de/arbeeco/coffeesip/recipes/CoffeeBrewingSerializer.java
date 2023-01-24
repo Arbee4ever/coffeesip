@@ -17,22 +17,23 @@ public class CoffeeBrewingSerializer implements QuiltRecipeSerializer<CoffeeBrew
 	@Override
 	public CoffeeBrewingRecipe read(Identifier id, JsonObject json) {
 		var schema = gson.fromJson(json, JsonSchema.class);
-		if (schema.inputs == null) {
+		if (schema.input == null) {
 			throw new JsonSyntaxException("Missing field 'input'");
+		}
+		if (schema.ingredient == null) {
+			throw new JsonSyntaxException("Missing field 'ingredient'");
 		}
 		if (schema.result == null) {
 			throw new JsonSyntaxException("Missing field 'result'");
 		}
 		var fuel = schema.fuel;
 		var water = schema.water;
-		var inputs = new Ingredient[schema.inputs.length];
-		for (int i = 0; i < schema.inputs.length; i++) {
-			inputs[i] = Ingredient.fromJson(schema.inputs[i]);
-		}
+		var input = Ingredient.fromJson(schema.input);
+		var ingredient = Ingredient.fromJson(schema.ingredient);
 
 		var result = ShapedRecipe.outputFromJson(schema.result);
 
-		return new CoffeeBrewingRecipe(id, fuel, water, inputs, result);
+		return new CoffeeBrewingRecipe(id, fuel, water, input, ingredient, result);
 	}
 
 	@Override
@@ -45,11 +46,9 @@ public class CoffeeBrewingSerializer implements QuiltRecipeSerializer<CoffeeBrew
 		var obj = new JsonObject();
 		obj.add("type", new JsonPrimitive(CoffeeBrewingRecipe.TYPE.id().toString()));
 		obj.add("fuel", new JsonPrimitive(recipe.fuel()));
-		var inputs = new JsonArray();
-		for (var input : recipe.inputs()) {
-			inputs.add(input.toJson());
-		}
-		obj.add("inputs", inputs);
+		obj.add("water", new JsonPrimitive(recipe.water()));
+		obj.add("input", recipe.input().toJson());
+		obj.add("ingredient", recipe.ingredient().toJson());
 		ItemStack.CODEC.encode(recipe.result(), JsonOps.INSTANCE, JsonOps.INSTANCE.empty())
 				.result()
 				.ifPresent(result -> obj.add("result", result));
@@ -62,7 +61,8 @@ public class CoffeeBrewingSerializer implements QuiltRecipeSerializer<CoffeeBrew
 	public static class JsonSchema {
 		public int fuel;
 		public int water;
-		public JsonObject[] inputs;
+		public JsonObject input;
+		public JsonObject ingredient;
 		public JsonObject result;
 	}
 }

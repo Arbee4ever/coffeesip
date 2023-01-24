@@ -122,7 +122,7 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 
 		@Override
 		public boolean canInsert(ItemStack stack) {
-			if (this.getStack().isOf(Items.AIR)) {
+			if (getStack().isOf(Items.AIR)) {
 				return matches(stack);
 			}
 			return false;

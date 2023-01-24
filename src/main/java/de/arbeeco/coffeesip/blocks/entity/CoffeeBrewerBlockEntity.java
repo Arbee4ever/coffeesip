@@ -126,13 +126,18 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 			markDirty(world, pos, state);
 		}
 
-		if (blockEntity.brewTime > 0 && blockEntity.canCraft()) {
-			--blockEntity.brewTime;
-			if (blockEntity.brewTime == 0) {
-				blockEntity.tryCraft();
+		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, blockEntity, world);
+		if (optional.isPresent()) {
+			if (blockEntity.brewTime > 0 && blockEntity.canCraft(optional.get())) {
+				--blockEntity.brewTime;
+				if (blockEntity.brewTime == 0) {
+					blockEntity.craft(optional.get());
+				}
+			} else if (blockEntity.canCraft(optional.get())) {
+				blockEntity.brewTime = 100;
+			} else {
+				blockEntity.brewTime = 0;
 			}
-		} else if(blockEntity.canCraft()) {
-			blockEntity.brewTime = 100;
 		} else {
 			blockEntity.brewTime = 0;
 		}
@@ -151,46 +156,35 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 		}
 	}
 
-	private boolean canCraft() {
+	private boolean canCraft(CoffeeBrewingRecipe coffeeBrewingRecipe) {
 		if (!(PotionUtil.getPotion(getStack(0)).getEffects().size() == 0) || !(PotionUtil.getPotion(getStack(1)).getEffects().size() == 0)) {
 			return false;
 		}
-		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world);
-		if (optional.isEmpty()) return false;
-		reservedWater = optional.get().water();
-		reservedFuel = optional.get().fuel();
+		reservedWater = coffeeBrewingRecipe.water();
+		reservedFuel = coffeeBrewingRecipe.fuel();
 		return getFuel() - reservedFuel >= 0 && getWater() - reservedWater >= 0;
 	}
 
-	private void tryCraft() {
-		var optional = world.getRecipeManager().getFirstMatch(CoffeeRecipes.COFFEE_BREWING, this, world);
-		optional.ifPresent(this::startCrafting);
-	}
-
-	private void startCrafting(CoffeeBrewingRecipe coffeeBrewingRecipe) {
+	private void craft(CoffeeBrewingRecipe coffeeBrewingRecipe) {
 		boolean potion = false;
 		result = coffeeBrewingRecipe.getOutput();
 		water -= reservedWater;
 		fuel -= reservedFuel;
 
 		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < coffeeBrewingRecipe.inputs().length - 1; j++) {
-				if (coffeeBrewingRecipe.inputs()[j].test(getStack(i))) {
-					ItemStack output = result.copy();
-					if(getStack(2).isOf(Items.POTION)) {
-						potion = true;
-						PotionUtil.setPotion(output, PotionUtil.getPotion(getStack(2)));
-					}
-					setStack(i, output);
+			if (coffeeBrewingRecipe.input().test(getStack(i))) {
+				ItemStack output = result.copy();
+				if (getStack(2).isOf(Items.POTION)) {
+					potion = true;
+					PotionUtil.setPotion(output, PotionUtil.getPotion(getStack(2)));
 				}
+				setStack(i, output);
 			}
 		}
-		for (int i = 0; i < coffeeBrewingRecipe.inputs().length; i++) {
-			if (coffeeBrewingRecipe.inputs()[i].test(new ItemStack(getStack(2).getItem()))) {
-				getStack(2).decrement(coffeeBrewingRecipe.inputs()[i].getMatchingStacks()[0].getCount());
-				if (potion) {
-					setStack(2, new ItemStack(Items.GLASS_BOTTLE));
-				}
+		if (coffeeBrewingRecipe.input().test(new ItemStack(getStack(2).getItem()))) {
+			getStack(2).decrement(coffeeBrewingRecipe.input().getMatchingStacks()[0].getCount());
+			if (potion) {
+				setStack(2, new ItemStack(Items.GLASS_BOTTLE));
 			}
 		}
 		markDirty();

@@ -1,10 +1,13 @@
 plugins {
 	id 'maven-publish'
-	alias(libs.plugins.quilt.loom)
+	alias libs.plugins.quilt.loom
 	id "com.modrinth.minotaur" version "2.4.2"
 }
 
-archivesBaseName = project.archives_base_name
+base {
+	archivesName = project.archives_base_name
+}
+
 version = project.version + "-" + libs.minecraft
 group = project.maven_group
 
@@ -16,6 +19,20 @@ repositories {
 	// for more information about repositories.
 }
 
+loom {
+	// Loom and Loader both use this block in order to gather more information about your mod.
+	mods {
+		// This should match your mod id.
+		"coffeesip" {
+			// Tell Loom about each source set used by your mod here. This ensures that your mod's classes are properly transformed by Loader.
+			sourceSet("main")
+			// If you shade (directly include classes, not JiJ) a dependency into your mod, include it here using one of these methods:
+			// dependency("com.example.shadowedmod:1.2.3")
+			// configuration("exampleShadedConfigurationName")
+		}
+	}
+}
+
 // All the dependencies are declared at gradle/libs.version.toml and referenced with "libs.<id>"
 // See https://docs.gradle.org/current/userguide/platforms.html for information on how version catalogs work.
 dependencies {
@@ -25,28 +42,28 @@ dependencies {
 
 	// QSL is not a complete API; You will need Quilted Fabric API to fill in the gaps.
 	// Quilted Fabric API will automatically pull in the correct QSL version.
-	modImplementation libs.quilted.fabric.api
+	modImplementation libs.bundles.quilted.fabric.api
 	// modImplementation libs.bundles.quilted.fabric.api // If you wish to use Fabric API's deprecated modules, you can replace the above line with this one
 }
 
 processResources {
-	inputs.property "version", version
+	inputs.properties 'version': version, 'group': project.group
 
 	filesMatching('quilt.mod.json') {
-		expand "version": version
+		expand 'version': version, 'group': project.group
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 17
+	it.options.encoding = 'UTF-8'
+	// Minecraft 1.20.5 (24w14a) upwards uses Java 21.
+	it.options.release = 21
 }
 
 java {
 	// Still required by IDEs such as Eclipse and Visual Studio Code
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task if it is present.
 	// If you remove this line, sources will not be generated.
@@ -60,7 +77,7 @@ java {
 // If you plan to use a different file for the license, don't forget to change the file name here!
 jar {
 	from("LICENSE") {
-		rename { "${it}_${archivesBaseName}" }
+		rename { "${it}_${base.archivesName.get()}" }
 	}
 }
 
@@ -87,7 +104,7 @@ modrinth {
 	versionName = "[QUILT]" + project.name + "-${version}"
 	versionType = "beta"
 	uploadFile = remapJar
-	gameVersions = ["1.19.2"]
+	gameVersions = ["1.21"]
 	loaders = ["quilt"]
 	changelog = project.file("CHANGELOG.md").text
 	dependencies {

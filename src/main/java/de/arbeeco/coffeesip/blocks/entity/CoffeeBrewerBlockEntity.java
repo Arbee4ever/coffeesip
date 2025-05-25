@@ -11,13 +11,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -34,6 +36,7 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	private final DefaultedList<ItemStack> inventory;
 	int brewTime = 0;
 	private boolean[] slotsEmptyLastTick;
+	private Item itemBrewing;
 	int fuel;
 	int reservedFuel = 0;
 	int water;
@@ -238,6 +241,18 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	}
 
 	@Override
+	protected void readNbtImpl(NbtCompound nbt, HolderLookup.Provider lookupProvider) {
+		super.readNbtImpl(nbt, lookupProvider);
+		Inventories.readNbt(nbt, this.inventory, lookupProvider);
+		this.brewTime = nbt.getShort("BrewTime");
+		if (this.brewTime > 0) {
+			this.itemBrewing = ((ItemStack)this.inventory.get(3)).getItem();
+		}
+
+		this.fuel = nbt.getByte("Fuel");
+	}
+
+	@Override
 	public void readNbt(NbtCompound nbt) {
 		super.readNbt(nbt);
 		fuel = nbt.getByte("Fuel");
@@ -247,23 +262,18 @@ public class CoffeeBrewerBlockEntity extends LockableContainerBlockEntity implem
 	}
 
 	@Override
-	public void writeNbt(NbtCompound nbt) {
-		super.writeNbt(nbt);
-		nbt.putByte("Fuel", (byte) fuel);
-		nbt.putByte("Water", (byte) water);
-		nbt.putShort("BrewTime", (short) brewTime);
-		Inventories.writeNbt(nbt, inventory);
+	public void writeNbt(NbtCompound nbt, HolderLookup.Provider lookupProvider) {
+		super.writeNbt(nbt, lookupProvider);
+		nbt.putShort("BrewTime", (short)this.brewTime);
+		Inventories.writeNbt(nbt, this.inventory, lookupProvider);
+		nbt.putByte("Fuel", (byte)this.fuel);
+		nbt.putByte("Water", (byte)this.water);
 	}
 
 	@Nullable
 	@Override
 	public Packet<ClientPlayPacketListener> toUpdatePacket() {
 		return BlockEntityUpdateS2CPacket.of(this);
-	}
-
-	@Override
-	public NbtCompound toInitialChunkDataNbt() {
-		return toNbt();
 	}
 
 	@Override

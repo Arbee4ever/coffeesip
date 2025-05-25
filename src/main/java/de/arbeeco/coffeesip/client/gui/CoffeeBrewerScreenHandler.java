@@ -50,13 +50,13 @@ public class CoffeeBrewerScreenHandler extends ScreenHandler {
 	}
 
 	@Override
-	public ItemStack transferSlot(PlayerEntity player, int invSlot) {
+	public ItemStack quickTransfer(PlayerEntity player, int fromIndex) {
 		ItemStack newStack = ItemStack.EMPTY;
-		Slot slot = slots.get(invSlot);
+		Slot slot = slots.get(fromIndex);
 		if (slot.hasStack()) {
 			ItemStack originalStack = slot.getStack();
 			newStack = originalStack.copy();
-			if (invSlot < this.inventory.size()) {
+			if (fromIndex < this.inventory.size()) {
 				if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
 					return ItemStack.EMPTY;
 				}
